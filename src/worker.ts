@@ -231,10 +231,10 @@ window.startRandom=function(){startGame(createRandomDog())};
 const pl=document.getElementById('presetList');
 for(const[k,p]of Object.entries(PRESETS)){const btn=document.createElement('button');btn.className='preset-btn';btn.innerHTML=p.emoji+' '+p.name+' <span style="color:#8A93B4">'+BREEDS[p.breed].name+'</span>';btn.onclick=()=>startGame(createDogFromPreset(k));pl.appendChild(btn)}
 
-function addNarration(text){narrations.unshift({text,time:Date.now()});if(narrations.length>5)narrations.pop();const el=document.querySelector('.narration');if(el)el.textContent=text;renderPanel()}
+function addNarration(text,useSeed){narrations.unshift({text,time:Date.now()});if(narrations.length>5)narrations.pop();const el=document.querySelector('.narration');if(el)el.textContent=text;renderPanel();if(useSeed&&dogs.length){const dog=dogs[selectedDog]||dogs[0];const prompt='You are '+dog.name+', a '+BREEDS[dog.breed]?.name+'. DNA: speed='+Math.round(dog.dna.speed*100)+'%, patience='+Math.round(dog.dna.patience*100)+'%, obedience='+Math.round(dog.dna.obedience*100)+'%, bravery='+Math.round(dog.dna.bravery*100)+'%, gentleness='+Math.round(dog.dna.gentleness*100)+'%. Trust: '+dog.trust+'/100. Context: '+text.replace(dog.name+' ','');fetch('/api/think',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})}).then(r=>r.json()).then(d=>{if(d.narration&&el){el.textContent=d.narration;narrations[0].text=d.narration}}).catch(()=>{})}}
 
 // Canvas click → set target
-canvas.addEventListener('pointerdown',(e)=>{if(!dogs.length||selectedDog===null)return;const r=canvas.getBoundingClientRect();const sx=(e.clientX-r.left)/r.width*600;const sy=(e.clientY-r.top)/r.height*400;const dog=dogs[selectedDog];if(activeCmd==='recall'){dog.targetX=150;dog.targetY=300;dog.state='moving';addNarration(dog.name+' recalls to handler position.');activeCmd=null;renderPanel();return}dog.targetX=sx;dog.targetY=sy;dog.state='moving';if(activeCmd){const skill=dog.dna.skills[activeCmd]||0;if(skill<10)dog.dna.skills[activeCmd]=10;dog.dna.skills[activeCmd]=Math.min(100,dog.dna.skills[activeCmd]+0.5);modifyTrustJS(selectedDog,1,'followed command');addNarration(dog.name+' '+activeCmd+'s to position. Skill +0.5.');}else{addNarration(dog.name+' moves to waypoint.')}renderPanel()});
+canvas.addEventListener('pointerdown',(e)=>{if(!dogs.length||selectedDog===null)return;const r=canvas.getBoundingClientRect();const sx=(e.clientX-r.left)/r.width*600;const sy=(e.clientY-r.top)/r.height*400;const dog=dogs[selectedDog];if(activeCmd==='recall'){dog.targetX=150;dog.targetY=300;dog.state='moving';addNarration(dog.name+' recalls to handler position.');activeCmd=null;renderPanel();return}dog.targetX=sx;dog.targetY=sy;dog.state='moving';if(activeCmd){const skill=dog.dna.skills[activeCmd]||0;if(skill<10)dog.dna.skills[activeCmd]=10;dog.dna.skills[activeCmd]=Math.min(100,dog.dna.skills[activeCmd]+0.5);modifyTrustJS(selectedDog,1,'followed command');addNarration(dog.name+' '+activeCmd+'s to position. Skill +0.5.',true);}else{addNarration(dog.name+' moves to waypoint.')}renderPanel()});
 
 function modifyTrustJS(idx,amt,reason){const d=dogs[idx];d.trust=Math.max(0,Math.min(100,d.trust+amt));d.trainingLog.push({action:'trust',result:(amt>0?'+':'')+amt+' trust: '+reason,ts:Date.now()});if(d.trainingLog.length>100)d.trainingLog.shift()}
 
@@ -300,17 +300,44 @@ document.getElementById('panel').innerHTML=h}
 
 window.toggleCmd=function(cmd){activeCmd=activeCmd===cmd?null:cmd;renderPanel()};
 window.restDog=function(){if(!dogs.length)return;const dog=dogs[selectedDog];dog.state='resting';addNarration(dog.name+' rests. Energy recovering.');renderPanel()};
-window.rewardDog=function(){if(!dogs.length)return;const dog=dogs[selectedDog];modifyTrustJS(selectedDog,3,'treat reward');dog.energy=Math.min(100,dog.energy+10);addNarration(dog.name+' wags tail! Trust +3, Energy +10. "I like this human."');renderPanel()};
+window.rewardDog=function(){if(!dogs.length)return;const dog=dogs[selectedDog];modifyTrustJS(selectedDog,3,'treat reward');dog.energy=Math.min(100,dog.energy+10);addNarration(dog.name+' gets a treat! Trust +3.',true);renderPanel()};
 window.resetCourse=function(){course.sheep=[];for(let i=0;i<5;i++)course.sheep.push({x:80+Math.random()*300,y:50+Math.random()*200,vx:0,vy:0,panic:0});addNarration('New course set. 5 sheep scattered.');renderPanel()};
 </script></body></html>`;
+}
+
+async function seedThink(prompt: string, env: Env): Promise<string> {
+  const providers = [
+    { key: env.DEEPINFRA_API_KEY, url: 'https://api.deepinfra.com/v1/openai/chat/completions', model: 'ByteDance/Seed-2.0-mini' },
+    { key: env.SILICONFLOW_API_KEY, url: 'https://api.siliconflow.com/v1/chat/completions', model: 'ByteDance-Seed/Seed-OSS-36B-Instruct' },
+    { key: env.DEEPSEEK_API_KEY, url: 'https://api.deepseek.com/v1/chat/completions', model: 'deepseek-chat' },
+  ];
+  for (const p of providers) {
+    if (!p.key) continue;
+    try {
+      const r = await fetch(p.url, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + p.key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: p.model, messages: [{ role: 'system', content: 'You are a dog inner monologue. First person. 1-2 sentences. Show personality. No quotes.' }, { role: 'user', content: prompt }], max_tokens: 100, temperature: 0.9 }),
+      });
+      if (r.ok) { const d = await r.json(); return d.choices?.[0]?.message?.content || ''; }
+    } catch {}
+  }
+  return '';
 }
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    const csp = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:;";
+    const csp = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.deepinfra.com https://api.siliconflow.com https://api.deepseek.com https:*;";
     if (url.pathname === '/') return new Response(gameHtml(), { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': csp } });
     if (url.pathname === '/health') return new Response(JSON.stringify({ status: 'ok', vessel: 'dogmind-arena' }), { headers: { 'Content-Type': 'application/json' } });
+    if (url.pathname === '/api/think' && request.method === 'POST') {
+      try {
+        const body = await request.json();
+        const narration = await seedThink(body.prompt || '', env);
+        return new Response(JSON.stringify({ narration }), { headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+      } catch (e: any) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } }); }
+    }
     return new Response('Not found', { status: 404 });
   },
 };
