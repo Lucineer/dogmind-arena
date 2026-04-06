@@ -319,7 +319,7 @@ async function seedThink(prompt: string, env: Env): Promise<string> {
         headers: { 'Authorization': 'Bearer ' + p.key, 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: p.model, messages: [{ role: 'system', content: 'You are a dog inner monologue. First person. 1-2 sentences. Show personality. No quotes.' }, { role: 'user', content: prompt }], max_tokens: 100, temperature: 0.9 }),
       });
-      if (r.ok) { const d = await r.json(); return d.choices?.[0]?.message?.content || ''; }
+      if (r.ok) { const d = await r.json(); const c = d.choices?.[0]?.message?.content || ''; if (c) return c; console.error('[DogMind] Empty content from', p.model, JSON.stringify(d).slice(0, 200)); } else { console.error('[DogMind] API error', r.status, await r.text()); }
     } catch {}
   }
   return '';
@@ -333,10 +333,13 @@ export default {
     if (url.pathname === '/health') return new Response(JSON.stringify({ status: 'ok', vessel: 'dogmind-arena' }), { headers: { 'Content-Type': 'application/json' } });
     if (url.pathname === '/api/think' && request.method === 'POST') {
       try {
+        console.log('[DogMind] /api/think hit');
         const body = await request.json();
+        console.log('[DogMind] prompt:', (body.prompt || '').slice(0, 100));
         const narration = await seedThink(body.prompt || '', env);
+        console.log('[DogMind] narration:', narration.slice(0, 100));
         return new Response(JSON.stringify({ narration }), { headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
-      } catch (e: any) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } }); }
+      } catch (e: any) { console.error('[DogMind] error:', e.message); return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } }); }
     }
     return new Response('Not found', { status: 404 });
   },
