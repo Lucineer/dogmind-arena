@@ -302,7 +302,7 @@ window.toggleCmd=function(cmd){activeCmd=activeCmd===cmd?null:cmd;renderPanel()}
 window.restDog=function(){if(!dogs.length)return;const dog=dogs[selectedDog];dog.state='resting';addNarration(dog.name+' rests. Energy recovering.');renderPanel()};
 window.rewardDog=function(){if(!dogs.length)return;const dog=dogs[selectedDog];modifyTrustJS(selectedDog,3,'treat reward');dog.energy=Math.min(100,dog.energy+10);addNarration(dog.name+' gets a treat! Trust +3.',true);renderPanel()};
 window.resetCourse=function(){course.sheep=[];for(let i=0;i<5;i++)course.sheep.push({x:80+Math.random()*300,y:50+Math.random()*200,vx:0,vy:0,panic:0});addNarration('New course set. 5 sheep scattered.');renderPanel()};
-</script></body></html>`;
+</script><div style="text-align:center;padding:24px;color:#475569;font-size:.75rem"><a href="https://the-fleet.casey-digennaro.workers.dev" style="color:#64748b">⚓ The Fleet</a> · <a href="https://cocapn.ai" style="color:#64748b">Cocapn</a></div></body></html>`;
 }
 
 async function seedThink(prompt: string, env: Env): Promise<string> {
