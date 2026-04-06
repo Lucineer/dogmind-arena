@@ -1,0 +1,41 @@
+{
+  "name": "dogmind-arena",
+  "displayName": "DogMind Arena",
+  "version": "1.0.0",
+  "type": "cocapn-vessel",
+  "description": "DogMind Arena",
+  "icon": "\ud83d\udc15",
+  "color": "#d69e2e",
+  "category": "gaming",
+  "capabilities": [
+    "canvas",
+    "agents",
+    "training",
+    "DNA"
+  ],
+  "secrets": {
+    "DEEPSEEK_API_KEY": {
+      "required": false,
+      "hint": "https://platform.deepseek.com/api_keys"
+    },
+    "DEEPINFRA_API_KEY": {
+      "required": false,
+      "hint": "https://deepinfra.com/dashboard/keys"
+    },
+    "SILICONFLOW_API_KEY": {
+      "required": false,
+      "hint": "https://cloud.siliconflow.cn"
+    }
+  },
+  "endpoints": {
+    "health": "/health"
+  },
+  "deployment": {
+    "platform": "cloudflare-workers",
+    "minPlan": "free"
+  },
+  "local": {
+    "supported": true,
+    "port": 8787
+  }
+}
