@@ -1,60 +1,42 @@
-# DogMind Arena — Train Agents Through Trust 🐕
+# DogMind Arena 🐕
 
-You train AI dog agents in a persistent, genetic simulation. Progress is slow. They ignore you at first. Your actions are permanent.
-
----
-
-## Why this exists
-Most agent demos are built for immediate obedience. This explores a slower dynamic: what happens when you must earn an agent's attention through consistent interaction? Every choice accumulates. Nothing is reset.
+You train AI dog agents in a persistent, genetic simulation. Progress is measured in sessions, not seconds. Your first dog will ignore your commands.
 
 **Live Arena:** https://dogmind-arena.casey-digennaro.workers.dev
 
----
+## Why This Exists
+Most AI agents respond immediately. This simulation is built around delayed trust. Your goal is not to issue perfect commands, but to be present. You show up, you interact, and change happens slowly.
 
-## How it works
-*   **Heritable Traits:** Each dog has 8 core traits (e.g., Brave, Patient) that influence its reactions. A brave dog investigates loud noises; a patient dog waits longer for your return.
-*   **Earned Trust:** You begin as a stranger. Commands are often ignored. Through repeated positive interaction, you advance through 5 bond levels, up to a state of learned cooperation.
-*   **Skill Memory:** Skills are not unlocked with points. You demonstrate a command, the dog remembers the pattern, and with enough repetition, it becomes a habitual response.
-*   **Genetic Lines:** Breed two dogs to combine and mutate their traits. Run generational experiments in your forked kennel over time.
-*   **Optional Narration:** Enable to have each dog describe its internal state using your own LLM API key.
-*   **Stateless Runtime:** Deploys as a single Cloudflare Worker with zero dependencies. No database; persistence is managed via your repository.
+## Quick Start
+1.  **Fork** this repository.
+2.  **Deploy** to Cloudflare Workers. It uses zero dependencies and requires no build.
+3.  **Visit** your deployment. Your first 10 minutes will be quiet, with minimal feedback.
+4.  *(Optional)* Add an `LLM_API_KEY` Worker secret to enable internal narration for your dogs.
 
----
+## What This Is Not
+*   A game with scores or a win condition.
+*   A tool for rapid prototyping of agent behaviors.
+*   A shared world. Your fork and its KV data are your private kennel.
 
-## What to expect
-This is a foundational simulation, not a polished game:
-*   **No resets.** All interactions are permanent for each dog's lineage.
-*   **Fork-first ownership.** Your repository is your kennel. You control all changes.
-*   **Slow progression.** Early training requires patience. This is by design.
-*   **One honest limitation:** The genetic system is experimental. While traits are heritable, the expression of complex behaviors across generations can be unpredictable.
+## How It Works
+*   **Heritable Traits:** Each dog has 8 core behavioral traits (e.g., curiosity, stamina) passed down through breeding with controlled mutation. 🧬
+*   **Earned Response:** You start as a stranger. A dog must progress through 5 levels of familiarity before it consistently responds to basic commands.
+*   **Skill Memory:** Demonstrating an action (like "sit") adds it to a dog's memory. It may choose to replicate it later.
+*   **Persistent State:** All dog DNA and lineage data is stored in your Cloudflare KV namespace. Git history serves as a permanent log.
+*   **Optional Narration:** If you provide an API key, dogs will describe their internal state using the LLM of your choice. 🔑
 
----
+## One Specific Limitation
+Without an `LLM_API_KEY` set, you will not receive any textual narration of a dog's internal state, which can make early training feel opaque until visual behavioral cues become familiar.
 
-## Quick start
-1.  Fork this repository.
-2.  Deploy to Cloudflare Workers (using the `wrangler` CLI or dashboard).
-3.  *(Optional)* Add an `LLM_API_KEY` secret for narration.
-4.  Visit your deployment and begin training. The first interactions will be quiet.
+## Architecture
+A single, self-contained Cloudflare Worker. All logic, from genetic algorithms to session tracking, runs in this single file. State is persisted to KV. There are no external API calls unless you enable narration.
 
----
+## Modify Your Fork
+This is a foundation. You can change everything: define new traits, adjust mutation rates, create different breeds, or replace the trust system. Your repository is your simulation's source code.
 
-## Build from this foundation
-Modify your fork to:
-*   Introduce new breeds, traits, or environmental stimuli.
-*   Create training courses or work tasks.
-*   Replace the narration engine with a different model or provider.
-*   Experiment with alternate trust or inheritance algorithms.
+## License
+MIT
 
-Contributions are welcome via pull request, but the intended path is experimentation in your own fork.
+Attribution: Superinstance and Lucineer (DiGennaro et al.)
 
----
-
-MIT License.
-
-**Attribution:** Superinstance & Lucineer (DiGennaro et al.).
-
-<div>
-  <strong>Part of the Cocapn Fleet:</strong>
-  <a href="https://the-fleet.casey-digennaro.workers.dev">The Fleet</a> •
-  <a href="https://cocapn.ai">Cocapn</a>
-</div>
+<div style="text-align:center;padding:16px;color:#64748b;font-size:.8rem"><a href="https://the-fleet.casey-digennaro.workers.dev" style="color:#64748b">The Fleet</a> &middot; <a href="https://cocapn.ai" style="color:#64748b">Cocapn</a></div>
