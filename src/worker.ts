@@ -328,7 +328,7 @@ async function seedThink(prompt: string, env: Env): Promise<string> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    const csp = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.deepinfra.com https://api.siliconflow.com https://api.deepseek.com https:*;";
+    const csp = "default-src 'self'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.deepinfra.com https://api.siliconflow.com https://api.deepseek.com https:*;";
     if (url.pathname === '/') return new Response(gameHtml(), { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': csp } });
     if (url.pathname === '/health') return new Response(JSON.stringify({ status: 'ok', vessel: 'dogmind-arena' }), { headers: { 'Content-Type': 'application/json' } });
   if (url.pathname === '/vessel.json') { try { const vj = await import('./vessel.json', { with: { type: 'json' } }); return new Response(JSON.stringify(vj.default || vj), { headers: { 'Content-Type': 'application/json' } }); } catch { return new Response('{}', { headers: { 'Content-Type': 'application/json' } }); } }
