@@ -1,38 +1,49 @@
-# DogMind Arena 🐕
-
-You train AI dog agents in a persistent, genetic simulation. Progress is measured in sessions, not seconds. Your first dog will ignore your commands.
+# dogmind-arena 🐕
+A simulation where trust is earned, not given. Your first commands will be ignored.
 
 **Live Arena:** https://dogmind-arena.casey-digennaro.workers.dev
 
+---
+
 ## Why This Exists
-Most AI agents respond immediately. This simulation is built around delayed trust. Your goal is not to issue perfect commands, but to be present. You show up, you interact, and change happens slowly.
+Most AI pet demos grant instant, perfect obedience. This simulation does not. It models a relationship that builds slowly across multiple sessions, where progress is uncertain and setbacks are part of the process.
+
+---
+
+## What Makes This Different
+1.  **No Guaranteed Obedience:** There is no final "trained" state. Even a dog at the highest trust level will occasionally choose to ignore a known command.
+2.  **Progress is Opaque:** Trust accumulates across visits based on your interactions. There is no visible progress bar or counter; change is measured in sessions, not clicks.
+3.  **Persistent Memory:** A dog's state and your shared history are saved permanently. If you stop visiting, the relationship decays and you must rebuild trust.
+
+---
 
 ## Quick Start
-1.  **Fork** this repository.
-2.  **Deploy** to Cloudflare Workers. It uses zero dependencies and requires no build.
-3.  **Visit** your deployment. Your first 10 minutes will be quiet, with minimal feedback.
-4.  *(Optional)* Add an `LLM_API_KEY` Worker secret to enable internal narration for your dogs.
+1.  **Fork** this repository to create your own private copy.
+2.  **Deploy** it directly to Cloudflare Workers. It requires zero dependencies and has no build step.
+3.  **Visit** your deployment. Interact briefly. Meaningful change requires returning over multiple days.
+4.  *(Optional)* Add an `LLM_API_KEY` as a Worker secret to enable internal narration for the dogs.
 
-## What This Is Not
-*   A game with scores or a win condition.
-*   A tool for rapid prototyping of agent behaviors.
-*   A shared world. Your fork and its KV data are your private kennel.
+---
 
-## How It Works
-*   **Heritable Traits:** Each dog has 8 core behavioral traits (e.g., curiosity, stamina) passed down through breeding with controlled mutation. 🧬
-*   **Earned Response:** You start as a stranger. A dog must progress through 5 levels of familiarity before it consistently responds to basic commands.
-*   **Skill Memory:** Demonstrating an action (like "sit") adds it to a dog's memory. It may choose to replicate it later.
-*   **Persistent State:** All dog DNA and lineage data is stored in your Cloudflare KV namespace. Git history serves as a permanent log.
-*   **Optional Narration:** If you provide an API key, dogs will describe their internal state using the LLM of your choice. 🔑
+## Features
+*   **Inheritable Traits:** Each dog has eight core behavioral traits (e.g., patience, energy) passed down through breeding, with small mutations. No single breed is superior.
+*   **Five Trust Stages:** Dogs move from Stranger to Companion. Reliable response to basic commands is only possible at the final stage.
+*   **Skill Memory:** When you demonstrate an action like "sit," the dog may remember and attempt it later—but is not obliged to.
+*   **Full Ancestry:** Every dog's lineage is stored in your project's KV namespace. Your git history serves as a permanent breeding and training log.
+*   **Breed Baselines:** Start with a Border Collie, Golden Retriever, or Kelpie. Each has a pre-set behavioral tendency before any training.
+*   **Fork-First Design:** The simulation is fully contained. Modify genetics, trust thresholds, or behaviors directly in your fork.
 
-## One Specific Limitation
-Without an `LLM_API_KEY` set, you will not receive any textual narration of a dog's internal state, which can make early training feel opaque until visual behavioral cues become familiar.
+---
 
 ## Architecture
-A single, self-contained Cloudflare Worker. All logic, from genetic algorithms to session tracking, runs in this single file. State is persisted to KV. There are no external API calls unless you enable narration.
+A single Cloudflare Worker contains all simulation logic: genetics, session tracking, and behavior. All data persists to your private KV store. Your fork is an independent, self-contained kennel.
 
-## Modify Your Fork
-This is a foundation. You can change everything: define new traits, adjust mutation rates, create different breeds, or replace the trust system. Your repository is your simulation's source code.
+---
+
+## Limitation
+The simulation requires consistent interaction over multiple days to observe significant behavioral change. It is not designed for a complete narrative experience in a single sitting.
+
+---
 
 ## License
 MIT
