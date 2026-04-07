@@ -1,42 +1,60 @@
-# DogMind Arena — Train AI Dog Agents
+# DogMind Arena — Train Agents Through Trust 🐕
 
-A web-based game engine where you raise, train, and evolve AI dog agents. You don't control dogs — you train them. Every command teaches. Every bond unlocks capability.
+You train AI dog agents in a persistent, genetic simulation. Progress is slow. They ignore you at first. Your actions are permanent.
 
-## The Concept
+---
 
-- **4 preset dogs**: Rex (confident leader), Biscuit (distracted fluffball), Thunder (rebellious speedster), Blue (elder mentor)
-- **Personality DNA**: speed, patience, obedience, bravery, gentleness, social, intelligence, strength
-- **Trust system**: Stranger → Familiar → Friend → Partner → Bonded. Trust gates commands.
-- **Skill progression**: heel, flank, drive, gather, hold, recall. Recipe → Card → Muscle → Genetics.
-- **DNA breeding**: Crossover + mutation. Puppies inherit and innovate.
-- **Cocapn narration**: The agent narrates its own resource shifts.
+## Why this exists
+Most agent demos are built for immediate obedience. This explores a slower dynamic: what happens when you must earn an agent's attention through consistent interaction? Every choice accumulates. Nothing is reset.
 
-## How to Play
+**Live Arena:** https://dogmind-arena.casey-digennaro.workers.dev
 
-1. Choose a dog (or adopt random)
-2. Tap canvas to set waypoints
-3. Select a command (heel, flank, drive, etc.)
-4. Dog follows based on personality + trust + skill level
-5. Reward successful commands → builds trust → unlocks advanced commands
-6. Rest to recover energy
+---
 
-## AI Concepts Taught
+## How it works
+*   **Heritable Traits:** Each dog has 8 core traits (e.g., Brave, Patient) that influence its reactions. A brave dog investigates loud noises; a patient dog waits longer for your return.
+*   **Earned Trust:** You begin as a stranger. Commands are often ignored. Through repeated positive interaction, you advance through 5 bond levels, up to a state of learned cooperation.
+*   **Skill Memory:** Skills are not unlocked with points. You demonstrate a command, the dog remembers the pattern, and with enough repetition, it becomes a habitual response.
+*   **Genetic Lines:** Breed two dogs to combine and mutate their traits. Run generational experiments in your forked kennel over time.
+*   **Optional Narration:** Enable to have each dog describe its internal state using your own LLM API key.
+*   **Stateless Runtime:** Deploys as a single Cloudflare Worker with zero dependencies. No database; persistence is managed via your repository.
 
-- **Reinforcement learning**: Reward shaping through treats and trust
-- **Capability boundaries**: Trust gates what commands a dog can attempt
-- **Emergent behavior**: Same DNA, different training → different agents
-- **Genetic algorithms**: Breed two dogs, offspring inherits and mutates
-- **Equipment paradigm**: (coming) Gear that modifies what the dog perceives
+---
 
-## Live
+## What to expect
+This is a foundational simulation, not a polished game:
+*   **No resets.** All interactions are permanent for each dog's lineage.
+*   **Fork-first ownership.** Your repository is your kennel. You control all changes.
+*   **Slow progression.** Early training requires patience. This is by design.
+*   **One honest limitation:** The genetic system is experimental. While traits are heritable, the expression of complex behaviors across generations can be unpredictable.
 
-https://dogmind-arena.casey-digennaro.workers.dev
+---
 
-## Part of The Fleet
+## Quick start
+1.  Fork this repository.
+2.  Deploy to Cloudflare Workers (using the `wrangler` CLI or dashboard).
+3.  *(Optional)* Add an `LLM_API_KEY` secret for narration.
+4.  Visit your deployment and begin training. The first interactions will be quiet.
 
-- [The Fleet](https://github.com/Lucineer/the-fleet) — release vehicle
-- [Capitaine](https://github.com/Lucineer/capitaine) — technical flagship
-- [craftmind-herding](https://github.com/Lucineer/craftmind-herding) — Minecraft herding agents
-- [craftmind-ranch](https://github.com/Lucineer/craftmind-ranch) — Evolution engine
+---
 
-Superinstance & Lucineer (DiGennaro et al.)
+## Build from this foundation
+Modify your fork to:
+*   Introduce new breeds, traits, or environmental stimuli.
+*   Create training courses or work tasks.
+*   Replace the narration engine with a different model or provider.
+*   Experiment with alternate trust or inheritance algorithms.
+
+Contributions are welcome via pull request, but the intended path is experimentation in your own fork.
+
+---
+
+MIT License.
+
+**Attribution:** Superinstance & Lucineer (DiGennaro et al.).
+
+<div>
+  <strong>Part of the Cocapn Fleet:</strong>
+  <a href="https://the-fleet.casey-digennaro.workers.dev">The Fleet</a> •
+  <a href="https://cocapn.ai">Cocapn</a>
+</div>
